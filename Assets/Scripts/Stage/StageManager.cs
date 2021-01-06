@@ -5,16 +5,13 @@ using UnityEngine;
 public class StageManager : MonoBehaviour
 {
     public ZombieManager zombieManager;
-    public ItemChestManager itemChestManager;
     public StuffManager stuffManager;
-
-    public Transform player;
+    public CrateManager crateManager;
+    public FuelBarrelManager fuelBarrelManager;
+    public StageTable stageTable;
 
     public Sector sector = new Sector();
     private Vector2Int curSector;
-
-    public StageTable stageTable;
-    //private string curStage;
 
     private void Start()
     {
@@ -23,9 +20,10 @@ public class StageManager : MonoBehaviour
 
     private void Update()
     {
-        int x = (int)player.position.x / Sector.length;
-        int y = (int)player.position.z / Sector.length;
+        int x = (int)Player.Pos.x / Sector.length;
+        int y = (int)Player.Pos.z / Sector.length;
 
+        // Sector범위를 벗어났는지 체크한 뒤 벗어났다면 재정렬
         if (Mathf.Abs(curSector.x - x) >= Sector.halfCount || Mathf.Abs(curSector.y - y) >= Sector.halfCount)
         {
             Vector2Int newSector = new Vector2Int(x, y);
@@ -42,26 +40,29 @@ public class StageManager : MonoBehaviour
         for (int i = 0; i < stage.zombies.Length; i++)
         {
             var zombie = stage.zombies[i];
-            PoolingManager.instance.CreatePool(zombie.key, 5, zombie.prefab);
+            PoolingManager.instance.CreatePool(zombie.name, 5, zombie.prefab);
         }
         for (int i = 0; i < stage.stuffs.Length; i++)
         {
             var stuff = stage.stuffs[i];
-            PoolingManager.instance.CreatePool(stuff.key, 5, stuff.prefab);
+            PoolingManager.instance.CreatePool(stuff.name, 5, stuff.prefab);
         }
 
-        // Zombie 생성
-        zombieManager.Init(stage.GetZombieKeys());
+        // Zombie
+        zombieManager.Init(stage.GetSpawnInfos("Zombie"));
+        //zombieManager.Init(stage.GetZombieNames());
 
-        // ItemChest 생성
-        itemChestManager.Init();
+        // Crate
+        crateManager.Init();
 
-        // Stuff 생성
-        Stuff[][] stuffs = stuffManager.Init(stageTable, key, stage.stuffs.Length);
+        // FuelBarrel
+        fuelBarrelManager.Init();
+
+        // Stuff
+        Stuff[][] stuffs = stuffManager.Init(stage.GetSpawnInfos("Stuff"));
+        //Stuff[][] stuffs = stuffManager.Init(stage.GetStuffNames());
 
         // Sector 생성
         sector.SpawnSector(Vector2Int.zero, stuffs);
-
-        //curStage = key;
     }
 }

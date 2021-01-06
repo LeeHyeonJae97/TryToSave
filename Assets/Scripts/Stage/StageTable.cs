@@ -8,23 +8,55 @@ public class StageTable : MonoBehaviour
     public class Stage
     {
         [System.Serializable]
-        public class Prefab
+        public class SpawnObject
         {
-            public string key;
+            public string name;
+            public int percent;
             public GameObject prefab;
         }
 
-        public string key;
-        public Prefab[] zombies;
-        public Prefab[] stuffs;
+        public string name;
+        public SpawnObject[] zombies;
+        public SpawnObject[] stuffs;
 
-        public string[] GetZombieKeys()
+        public SpawnInfo[] GetSpawnInfos(string type)
         {
-            string[] keys = new string[zombies.Length];
-            for (int i = 0; i < keys.Length; i++)
-                keys[i] = zombies[i].key;
+            SpawnObject[] spawnObjects;
+            switch (type)
+            {
+                case "Zombie":
+                    spawnObjects = zombies;
+                    break;
+                case "Stuff":
+                    spawnObjects = stuffs;
+                    break;
+                default:
+                    return null;
+            }
 
-            return keys;
+            SpawnInfo[] spawnInfos = new SpawnInfo[spawnObjects.Length];
+            for (int i = 0; i < spawnInfos.Length; i++)
+                spawnInfos[i] = new SpawnInfo(spawnObjects[i].name, spawnObjects[i].percent);
+
+            return spawnInfos;
+        }
+
+        public string[] GetZombieNames()
+        {
+            string[] names = new string[zombies.Length];
+            for (int i = 0; i < names.Length; i++)
+                names[i] = zombies[i].name;
+
+            return names;
+        }
+
+        public string[] GetStuffNames()
+        {
+            string[] names = new string[stuffs.Length];
+            for (int i = 0; i < names.Length; i++)
+                names[i] = stuffs[i].name;
+
+            return names;
         }
     }
 
@@ -34,33 +66,11 @@ public class StageTable : MonoBehaviour
     private void Awake()
     {
         for (int i = 0; i < stages.Length; i++)
-            stageDic.Add(stages[i].key, stages[i]);
+            stageDic.Add(stages[i].name, stages[i]);
     }
 
     public Stage Get(string key)
     {
         return stageDic[key];
-    }
-
-    public GameObject GetStuff(string key, int keyIndex)
-    {
-        if (!stageDic.ContainsKey(key))
-        {
-            Debug.LogError("Wrong stage name");
-            return null;
-        }
-
-        return PoolingManager.instance.Get(stageDic[key].stuffs[keyIndex].key);
-    }
-
-    public void ReturnStuff(string key, GameObject stuff)
-    {
-        if(!stageDic.ContainsKey(key))
-        {
-            Debug.LogError("Wrong stage name");
-            return;
-        }
-
-        PoolingManager.instance.Return(stuff);
     }
 }

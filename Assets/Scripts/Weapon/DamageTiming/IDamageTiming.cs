@@ -2,8 +2,11 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public interface IDamageTiming
+public abstract class IDamageTiming : ScriptableObject
 {
-    void Damage(GameObject target, float damage);
-    void Damage(GameObject[] targets, float damage);
+    protected IDamage baseDamage;
+
+    public abstract void Init(IDamage baseDamage, string bulletName, float range);
+    public abstract void Damage(GameObject target, int damage);
+    public abstract void Damage(GameObject[] targets, int damage);
 }

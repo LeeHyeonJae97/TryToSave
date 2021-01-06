@@ -2,16 +2,40 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class JustDamage : IDebuff
+[CreateAssetMenu(fileName = "JustDamage", menuName = "ScriptableObject/Weapon/JustDamage")]
+public class JustDamage : IDamage
 {
-    public void Damage(GameObject target, float damage)
+    public override void Init(CrowdControl cc, string bloodEffect)
     {
-        target.GetComponent<Zombie>().Attacked((int)damage);
+        if(bloodEffect.CompareTo("") == 0)
+        {
+            Debug.LogError("Error");
+            return;
+        }
+
+        this.bloodEffect = bloodEffect;        
     }
 
-    public void Damage(GameObject[] targets, float damage)
+    public override void Damage(GameObject target, int damage)
     {
+        if (target == null || damage == 0)
+        {
+            Debug.LogError("Error");
+            return;
+        }
+
+        target.GetComponent<Zombie>().Attacked(damage, bloodEffect);
+    }
+
+    public override void Damage(GameObject[] targets, int damage)
+    {
+        if (targets == null || damage == 0)
+        {
+            Debug.LogError("Error");
+            return;
+        }
+
         for (int i = 0; i < targets.Length; i++)
-            targets[i].GetComponentInParent<Zombie>().Attacked((int)damage);
+            targets[i].GetComponent<Zombie>().Attacked(damage, bloodEffect);
     }
 }

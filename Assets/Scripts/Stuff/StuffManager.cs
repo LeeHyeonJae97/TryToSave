@@ -4,15 +4,12 @@ using UnityEngine;
 
 public class StuffManager : MonoBehaviour
 {
-    private const int maxRange = 14;
+    public int maxActiveRange = 14;
 
-    public Transform player;
-
+    private SpawnInfo[] spawnInfos;
+    private string[] keys;
     private Transform holder;
     private List<Stuff> stuffs = new List<Stuff>();
-
-    private StageTable stageTable;
-    private string curStage;
 
     private void Awake()
     {
@@ -23,16 +20,10 @@ public class StuffManager : MonoBehaviour
     {
         for (int i = 0; i < stuffs.Count; i++)
         {
-            if (!stuffs[i].active && (player.position - stuffs[i].pos).sqrMagnitude <= maxRange * maxRange)
-            {
-                GameObject stuff = stageTable.GetStuff(curStage, stuffs[i].keyIndex);
-                stuff.transform.position = stuffs[i].pos;
-                stuff.transform.SetParent(holder);
+            float dist = (Player.Pos - stuffs[i].pos).sqrMagnitude;
 
-                stuffs[i].active = true;
-                stuffs[i].go = stuff;
-            }
-            else if (stuffs[i].active && (player.position - stuffs[i].pos).sqrMagnitude > maxRange * maxRange)
+            // 일정 거리 이상 멀어지면 오브젝트를 풀에 반환
+            if (stuffs[i].active && dist > maxActiveRange * maxActiveRange)
             {
                 if (stuffs[i].go == null)
                 {
@@ -40,22 +31,93 @@ public class StuffManager : MonoBehaviour
                     return;
                 }
 
-                stageTable.ReturnStuff(curStage, stuffs[i].go);
+                PoolingManager.instance.Return(stuffs[i].go);
 
                 stuffs[i].active = false;
                 stuffs[i].go = null;
             }
+
+            // 일정 거리 내로 들어오면 오브젝트 할당받아 활성화
+            else if (!stuffs[i].active && dist <= maxActiveRange * maxActiveRange)
+            {
+                GameObject go = PoolingManager.instance.Get(spawnInfos[stuffs[i].keyIndex].name);
+
+                go.transform.position = stuffs[i].pos;
+                go.transform.SetParent(holder);
+
+                stuffs[i].active = true;
+                stuffs[i].go = go;
+            }
         }
     }
 
-    public Stuff[][] Init(StageTable stageTable, string curStage, int keyLength)
+    public Stuff[][] Init(SpawnInfo[] spawnInfos)
     {
-        this.stageTable = stageTable;
-        this.curStage = curStage;
+        this.spawnInfos = spawnInfos;
 
-        return SpawnStuff(keyLength);
+        Stuff[][] stuffs = new Stuff[Sector.count * Sector.count][];
+        for (int i = 0; i < stuffs.Length; i++)
+        {
+            List<Vector2> stuffPoses = new List<Vector2>();
+            for (int j = 0; j < 10; j++)
+            {
+                int x = Random.Range(-Sector.halfLength + 1, Sector.halfLength);
+                int y = Random.Range(-Sector.halfLength + 1, Sector.halfLength);
+                Vector2 tmp = new Vector2(x, y);
+
+                if (!stuffPoses.Contains(tmp)) stuffPoses.Add(tmp);
+            }
+
+            stuffs[i] = new Stuff[stuffPoses.Count];
+            for (int j = 0; j < stuffs[i].Length; j++)
+            {
+                int index = MyRandom.Random(spawnInfos);
+                if (index > -1)
+                {
+                    Stuff stuff = new Stuff(index, new Vector3(stuffPoses[j].x, 0, stuffPoses[j].y));
+                    stuffs[j][j] = stuff;
+
+                    this.stuffs.Add(stuff);
+                }
+            }
+        }
+
+        return stuffs;
     }
 
+    // Stuff[Sector 개수][Sector에 있는 Stuff의 개수]
+    public Stuff[][] Init(string[] keys)
+    {
+        this.keys = keys;
+
+        Stuff[][] stuffs = new Stuff[Sector.count * Sector.count][];
+        for (int i = 0; i < stuffs.Length; i++)
+        {
+            List<Vector2> stuffPoses = new List<Vector2>();
+            for (int j = 0; j < 10; j++)
+            {
+                int x = Random.Range(-Sector.halfLength + 1, Sector.halfLength);
+                int y = Random.Range(-Sector.halfLength + 1, Sector.halfLength);
+                Vector2 tmp = new Vector2(x, y);
+
+                if (!stuffPoses.Contains(tmp)) stuffPoses.Add(tmp);
+            }
+
+            stuffs[i] = new Stuff[stuffPoses.Count];
+            for (int j = 0; j < stuffs[i].Length; j++)
+            {
+                int keyIndex = Random.Range(0, keys.Length);
+                Stuff stuff = new Stuff(keyIndex, new Vector3(stuffPoses[j].x, 0, stuffPoses[j].y));
+                stuffs[i][j] = stuff;
+
+                this.stuffs.Add(stuff);
+            }
+        }
+
+        return stuffs;
+    }
+
+    /*
     private Stuff[][] SpawnStuff(int keyLength)
     {
         Stuff[][] stuffs = new Stuff[Sector.count * Sector.count][];
@@ -83,5 +145,11 @@ public class StuffManager : MonoBehaviour
         }
 
         return stuffs;
+    }
+    */
+
+    private void OnDrawGizmosSelected()
+    {
+        MyGizmos.DrawCircle(Player.Pos, Color.blue, maxActiveRange);
     }
 }

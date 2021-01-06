@@ -2,36 +2,26 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+[CreateAssetMenu(fileName = "RangeTarget", menuName = "ScriptableObject/Weapon/RangeTarget")]
 public class RangeTarget : IGetTarget
 {
-    public delegate GameObject GetOrgTarget(float range);
-    private GetOrgTarget getOrgTarget;
-
-    private IDamageTiming damageTiming;
-
-    public RangeTarget(GetOrgTarget getOrgTarget, IDamageTiming damageTiming)
+    public override bool GetTarget(int damage, float range, float hitRange)
     {
-        this.getOrgTarget = getOrgTarget;
-        this.damageTiming = damageTiming;
-    }
+        if (damage == 0 || range == 0 || hitRange == 0)
+        {
+            Debug.LogError("Error");
+            return false;
+        }
 
-    //**
-    // range값 어떻게 결정할지??
-    //**
-
-    public bool Damage(int amount, float damage, float range)
-    {
-        GameObject target = getOrgTarget(range);
+        GameObject target = getClosestTarget(range);
         if (target != null)
         {
-            Collider[] colls = Physics.OverlapSphere(target.transform.position, range * 2, 1 << LayerMask.NameToLayer("Zombie"));
+            Collider[] colls = Physics.OverlapSphere(target.transform.position, hitRange, 1 << LayerMask.NameToLayer("Zombie"));
 
-            amount = colls.Length >= amount ? amount : colls.Length;
-            Debug.Log(colls.Length);
+            GameObject[] targets = new GameObject[colls.Length];
+            for (int i = 0; i < targets.Length; i++) targets[i] = colls[i].gameObject;
 
-            GameObject[] targets = new GameObject[amount];
-            for (int i = 0; i < amount; i++) targets[i] = colls[i].gameObject;
-
+            Fire(target.transform.position);
             damageTiming.Damage(targets, damage);
 
             return true;

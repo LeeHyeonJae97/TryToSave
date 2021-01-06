@@ -6,6 +6,11 @@ using UnityEngine.Events;
 
 public class AlertConfirmPanel : MonoBehaviour
 {
+    public Vector2 center;
+    public Vector2 left, right;
+
+    public static AlertConfirmPanel instance;
+
     public Text message;
     public RectTransform confirmButton;
     public RectTransform cancelButton;
@@ -13,8 +18,18 @@ public class AlertConfirmPanel : MonoBehaviour
 
     private void Awake()
     {
+        if (instance == null) instance = this;
+
+        else if (this != instance)
+        {
+            Debug.LogError("Error");
+            Destroy(this);
+            return;
+        }
+
         confirmButton.gameObject.SetActive(false);
         cancelButton.gameObject.SetActive(false);
+        gameObject.SetActive(false);
     }
 
     public void Alert(string message)
@@ -24,8 +39,7 @@ public class AlertConfirmPanel : MonoBehaviour
         this.message.text = message;
 
         cancelButton.gameObject.SetActive(true);
-
-        cancelButton.anchoredPosition = new Vector2(0, -70);
+        cancelButton.anchoredPosition = center;
     }
 
     public void Alert(string message, UnityAction onClick)
@@ -33,12 +47,10 @@ public class AlertConfirmPanel : MonoBehaviour
         gameObject.SetActive(true);
 
         this.message.text = message;
-
         onClickConfirmButton = onClick;
 
         confirmButton.gameObject.SetActive(true);
-
-        confirmButton.anchoredPosition = new Vector2(0, -70);
+        confirmButton.anchoredPosition = center;
     }
 
     public void Confirm(string message, UnityAction onClick)
@@ -46,19 +58,18 @@ public class AlertConfirmPanel : MonoBehaviour
         gameObject.SetActive(true);
 
         this.message.text = message;
-
         onClickConfirmButton = onClick;
 
         confirmButton.gameObject.SetActive(true);
+        confirmButton.anchoredPosition = left;
         cancelButton.gameObject.SetActive(true);
-
-        confirmButton.anchoredPosition = new Vector2(-100, -70);
-        cancelButton.anchoredPosition = new Vector2(100, -70);
+        cancelButton.anchoredPosition = right;
     }
 
     public void OnClickConfirmButton()
     {
         OnClickCancelButton();
+
         if (onClickConfirmButton != null) onClickConfirmButton.Invoke();
         else Debug.LogError("Error");
     }

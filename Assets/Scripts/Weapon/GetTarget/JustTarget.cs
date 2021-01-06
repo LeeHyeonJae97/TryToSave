@@ -2,24 +2,21 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+[CreateAssetMenu(fileName = "JustTarget", menuName = "ScriptableObject/Weapon/JustTarget")]
 public class JustTarget : IGetTarget
 {
-    public delegate GameObject GetOrgTarget(float range);
-    private GetOrgTarget getOrgTarget;
-
-    private IDamageTiming damageTiming;
-
-    public JustTarget(GetOrgTarget getOrgTarget, IDamageTiming damageTiming)
+    public override bool GetTarget(int damage, float range, float hitRange)
     {
-        this.getOrgTarget = getOrgTarget;
-        this.damageTiming = damageTiming;
-    }
+        if (damage == 0 || range == 0)
+        {
+            Debug.LogError("Error");
+            return false;
+        }
 
-    public bool Damage(int amount, float damage, float range)
-    {
-        GameObject target = getOrgTarget(range);
+        GameObject target = getClosestTarget(range);
         if (target != null)
         {
+            Fire(target.transform.position);
             damageTiming.Damage(target, damage);
             return true;
         }

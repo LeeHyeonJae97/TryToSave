@@ -2,35 +2,28 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.Events;
 using UnityEngine.EventSystems;
 
 public class JoyStick : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
-{   
-    private Transform mainCam;
-    public Transform bkg;
-    public Transform stick;
+{
+    public delegate void Move(Vector3 dir);
 
-    public Player player;
+    public Transform mainCam;
+    public Move move;
 
-    private Image bkgImage, stickImage;
-    private Color32 translucent, transparent;
+    public Transform bkg, stick;
+    public Image bkgImage, stickImage;
+    public Color32 translucent, transparent;
+
     private Vector2 dir;
     private int bkgRadius;
     private bool isTouched;
-
     public bool IsFixed { get; set; }
 
     private void Awake()
     {
-        mainCam = Camera.main.transform;
         bkgRadius = (int)((RectTransform)bkg).rect.width / 2;
-
-        bkgImage = bkg.GetComponent<Image>();
-        stickImage = stick.GetComponent<Image>();
-
-        translucent = new Color32(255, 255, 255, 100);
-        transparent = new Color32(255, 255, 255, 0);
-
         IsFixed = false;
     }
 
@@ -49,7 +42,7 @@ public class JoyStick : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
             dir = (stick.position - bkg.position).normalized;
             dir = dir.x * new Vector2(mainCam.right.x, mainCam.right.z).normalized + dir.y * new Vector2(mainCam.forward.x, mainCam.forward.z).normalized;
 
-            if (dir != Vector2.zero) player.Move(new Vector3(dir.x, 0, dir.y));
+            if (dir != Vector2.zero) move(new Vector3(dir.x, 0, dir.y));
         }
     }
 
@@ -73,8 +66,7 @@ public class JoyStick : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
             bkgImage.color = transparent;
             stickImage.color = transparent;
         }
-        else
-            stick.position = bkg.position;        
+        else stick.position = bkg.position;        
 
         isTouched = false;
     }
@@ -89,6 +81,7 @@ public class JoyStick : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
         else return offset.normalized * bkgRadius + (Vector2)bkg.position;
     }
 
+    // 조이스틱을 고정으로 사용하는 경우 고정된 위치 설정
     public void SetFixedPosition(Vector2 pos)
     {
         bkg.position = pos;

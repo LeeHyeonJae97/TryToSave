@@ -4,13 +4,15 @@ using UnityEngine;
 
 public class Sector
 {   
-    public const int count = 7;    
+    public const int count = 7;
     public const int halfCount = 3;
     public const int length = 30;
     public const int halfLength = 15;
 
     private Dictionary<Vector2Int, Stuff[]> sectorDic = new Dictionary<Vector2Int, Stuff[]>();    
 
+    // 좌측하단부터 순서대로 우측상단까지 정렬
+    // 넘겨받은 Stuff들의 위치를 Sector를 고려하여 설정한뒤 sectorDic에 추가
     public void SpawnSector(Vector2Int curSector, Stuff[][] stuffs)
     {
         for (int i = 0; i < count; i++)
@@ -28,6 +30,9 @@ public class Sector
         //Debug.Log(curSector);
     }
 
+    // 기존에 설정되어있던 Sector범위를 벗어난 경우 현재 Sector를 중심으로 재정렬
+    // 현재 위치를 중심으로 반대편(멀리 떨어져있는 쪽) Sector의 정보를
+    // 그대로 가져와 새롭게 설정해줘야하는 Sector에 사용
     public void Rearrange(Vector2Int curSector, Vector2Int newSector)
     {
         for (int y = newSector.y - halfCount; y <= newSector.y + halfCount; y++)
@@ -44,13 +49,14 @@ public class Sector
 
                     Stuff[] stuffs = sectorDic[org];
                     for (int i = 0; i < stuffs.Length; i++)
-                        stuffs[i].pos = stuffs[i].pos + new Vector3(-org.x + tmp.x, 0, -org.y + tmp.y) * 30;
+                        stuffs[i].pos = stuffs[i].pos + new Vector3(-org.x + tmp.x, 0, -org.y + tmp.y) * length;
+
                     sectorDic.Add(tmp, stuffs);
                     sectorDic.Remove(org);
                 }
             }
         }
 
-        Debug.Log(curSector + "  " + newSector);
+        //Debug.Log(curSector + "  " + newSector);
     }
 }

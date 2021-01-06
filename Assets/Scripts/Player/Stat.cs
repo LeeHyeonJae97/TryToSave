@@ -3,10 +3,12 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [System.Serializable]
-public struct Stat
+public class Stat
 {
-    public string name;
+    public string statName;
+
     [HideInInspector] public bool maxLevel;
+
     private int level;
     public int Level
     {
@@ -14,14 +16,29 @@ public struct Stat
         set
         {
             level = value;
-            if (level >= this.value.Length) maxLevel = true;
+            if (level >= this.value.Length - 1) maxLevel = true;
         }
     }
+
     [SerializeField] private float[] value;
     public float Value
     {
-        get { return value[level - 1]; }
+        get { return value[level]; }
     }
-
-    public void LevelUp() => Level += 1;
+    public float NextLevelValue
+    {
+        get
+        {
+            if (!maxLevel) return value[level + 1];
+            else
+            {
+                Debug.LogError("Error");
+                return -1;
+            }
+        }
+    }
+    public float GetValue(int level)
+    {
+        return value[level];
+    }
 }

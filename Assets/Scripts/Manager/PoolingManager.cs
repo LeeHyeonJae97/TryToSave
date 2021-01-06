@@ -8,29 +8,43 @@ public class PoolingManager : MonoBehaviour
     public class Pool
     {
         public string key;
-        public int initAmount;
+        public int amount;
         public GameObject prefab;
         private Transform holder;
         private Queue<GameObject> queue;
 
-        public Pool(string key, int initAmount, GameObject prefab)
+        public Pool(string key, int amount, GameObject prefab, Transform poolHolder)
         {
             this.key = key;
-            this.initAmount = initAmount;
+            this.amount = amount;
             this.prefab = prefab;
 
-            Init();
+            Init(poolHolder);
         }
 
-        public void Init()
+        public void Init(Transform poolHolder)
         {
             queue = new Queue<GameObject>();
-            if (holder == null) holder = new GameObject(key + "Holder").transform;            
-
-            for (int i = 0; i < initAmount; i++)
+            if (holder == null)
             {
-                GameObject go = Instantiate(prefab, holder);
-                go.transform.SetParent(holder);
+                holder = new GameObject(key + "Holder").transform;
+                holder.SetParent(poolHolder);
+            }
+
+            for (int i = 0; i < amount; i++)
+            {
+                GameObject go = Instantiate(prefab, holder);                
+                go.name = key;
+                go.SetActive(false);
+                queue.Enqueue(go);
+            }
+        }
+
+        private void Expand()
+        {
+            for (int i = 0; i < amount; i++)
+            {
+                GameObject go = Instantiate(prefab, holder);                
                 go.name = key;
                 go.SetActive(false);
                 queue.Enqueue(go);
@@ -39,7 +53,7 @@ public class PoolingManager : MonoBehaviour
 
         public GameObject Get()
         {
-            if (queue.Count <= 0) Init();
+            if (queue.Count <= 0) Expand();
 
             GameObject go = queue.Dequeue();
             go.SetActive(true);
@@ -56,8 +70,9 @@ public class PoolingManager : MonoBehaviour
 
     public static PoolingManager instance;
 
+    private Transform poolHolder;
     public Pool[] pools;
-    private Dictionary<string, Pool> poolDic = new Dictionary<string, Pool>();
+    private Dictionary<string, Pool> poolDic = new Dictionary<string, Pool>();    
 
     private void Awake()
     {
@@ -68,16 +83,17 @@ public class PoolingManager : MonoBehaviour
             return;
         }
 
+        poolHolder = new GameObject("PoolHolder").transform;
         for (int i = 0; i < pools.Length; i++)
         {
-            pools[i].Init();
+            pools[i].Init(poolHolder);
             poolDic.Add(pools[i].key, pools[i]);
         }
     }
 
-    public void CreatePool(string key, int initAmount, GameObject prefab)
+    public void CreatePool(string key, int amount, GameObject prefab)
     {
-        Pool pool = new Pool(key, initAmount, prefab);
+        Pool pool = new Pool(key, amount, prefab, poolHolder);
         poolDic.Add(key, pool);
     }
 
@@ -122,6 +138,21 @@ public class PoolingManager : MonoBehaviour
         return go;
     }
 
+    public GameObject Get(string key, Vector3 pos, Quaternion rot)
+    {
+        if(!poolDic.ContainsKey(key))
+        {
+            Debug.LogError("Wrong key");
+            return null;
+        }
+
+        GameObject go = poolDic[key].Get();
+        go.transform.SetParent(null);
+        go.transform.position = pos;
+        go.transform.rotation = rot;
+        return go;
+    }
+
     public GameObject Get(string key, Transform parent, Vector3 pos)
     {
         if (!poolDic.ContainsKey(key))
@@ -140,7 +171,12 @@ public class PoolingManager : MonoBehaviour
     #region Return
     public void Return(GameObject go)
     {
-        poolDic[go.name].Return(go);
+        if (!poolDic.ContainsKey(go.name))
+        {
+            Debug.LogError("Wrong key : " + go.name);
+            return;
+        }
+        else poolDic[go.name].Return(go);
     }
     #endregion
 }
