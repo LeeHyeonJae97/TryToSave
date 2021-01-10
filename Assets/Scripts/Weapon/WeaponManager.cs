@@ -27,16 +27,14 @@ public class WeaponManager : MonoBehaviour
         }
     }
 
-    private void Start()
+    public void Init()
     {
         // 게임 시작 시 Pistol을 기본 무기로 제공
-        player.weapons[0] = GetWeapon(weaponInfoDic["Cannon"]);
+        player.weapons[0] = GetWeapon(weaponInfoDic["Pistol"]);
     }
 
     public Weapon GetWeapon(WeaponInfo info)
     {
-        for (int i = 0; i < info.stats.Length; i++) info.stats[i].Level = 0;
-
         IDamage baseDamage = Instantiate(info.baseDamage);
         baseDamage.Init(info.cc, info.bloodEffectName);
 

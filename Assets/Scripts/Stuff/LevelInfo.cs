@@ -6,5 +6,11 @@ using UnityEngine;
 public struct LevelInfo
 {
     public int amount;
-    public int percent;    
+    public int percent;
+
+    public LevelInfo(int amount, int percent)
+    {
+        this.amount = amount;
+        this.percent = percent;
+    }
 }

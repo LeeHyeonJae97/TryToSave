@@ -27,7 +27,7 @@ public class Weapon : MonoBehaviour
         this.baseGetTarget = baseGetTarget;
 
         for (int i = 0; i < info.stats.Length; i++)
-            statDic.Add(info.stats[i].statName, info.stats[i]);
+            statDic.Add(info.stats[i].statName, new Stat(info.stats[i].statName, info.stats[i].Values));
     }
 
     public void GetAllStats(out Stat[] values)

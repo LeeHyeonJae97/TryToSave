@@ -7,7 +7,6 @@ public class StuffManager : MonoBehaviour
     public int maxActiveRange = 14;
 
     private SpawnInfo[] spawnInfos;
-    private string[] keys;
     private Transform holder;
     private List<Stuff> stuffs = new List<Stuff>();
 
@@ -51,6 +50,7 @@ public class StuffManager : MonoBehaviour
         }
     }
 
+    // Stuff[Sector 개수][Sector에 있는 Stuff의 개수]
     public Stuff[][] Init(SpawnInfo[] spawnInfos)
     {
         this.spawnInfos = spawnInfos;
@@ -75,7 +75,7 @@ public class StuffManager : MonoBehaviour
                 if (index > -1)
                 {
                     Stuff stuff = new Stuff(index, new Vector3(stuffPoses[j].x, 0, stuffPoses[j].y));
-                    stuffs[j][j] = stuff;
+                    stuffs[i][j] = stuff;
 
                     this.stuffs.Add(stuff);
                 }
@@ -84,69 +84,6 @@ public class StuffManager : MonoBehaviour
 
         return stuffs;
     }
-
-    // Stuff[Sector 개수][Sector에 있는 Stuff의 개수]
-    public Stuff[][] Init(string[] keys)
-    {
-        this.keys = keys;
-
-        Stuff[][] stuffs = new Stuff[Sector.count * Sector.count][];
-        for (int i = 0; i < stuffs.Length; i++)
-        {
-            List<Vector2> stuffPoses = new List<Vector2>();
-            for (int j = 0; j < 10; j++)
-            {
-                int x = Random.Range(-Sector.halfLength + 1, Sector.halfLength);
-                int y = Random.Range(-Sector.halfLength + 1, Sector.halfLength);
-                Vector2 tmp = new Vector2(x, y);
-
-                if (!stuffPoses.Contains(tmp)) stuffPoses.Add(tmp);
-            }
-
-            stuffs[i] = new Stuff[stuffPoses.Count];
-            for (int j = 0; j < stuffs[i].Length; j++)
-            {
-                int keyIndex = Random.Range(0, keys.Length);
-                Stuff stuff = new Stuff(keyIndex, new Vector3(stuffPoses[j].x, 0, stuffPoses[j].y));
-                stuffs[i][j] = stuff;
-
-                this.stuffs.Add(stuff);
-            }
-        }
-
-        return stuffs;
-    }
-
-    /*
-    private Stuff[][] SpawnStuff(int keyLength)
-    {
-        Stuff[][] stuffs = new Stuff[Sector.count * Sector.count][];
-        for (int i = 0; i < stuffs.Length; i++)
-        {
-            List<Vector2> stuffPoses = new List<Vector2>();
-            for (int j = 0; j < 10; j++)
-            {
-                int x = Random.Range(-Sector.halfLength + 1, Sector.halfLength);
-                int y = Random.Range(-Sector.halfLength + 1, Sector.halfLength);
-                Vector2 tmp = new Vector2(x, y);
-
-                if (!stuffPoses.Contains(tmp)) stuffPoses.Add(tmp);
-            }
-
-            stuffs[i] = new Stuff[stuffPoses.Count];
-            for (int j = 0; j < stuffs[i].Length; j++)
-            {
-                int keyIndex = Random.Range(0, keyLength);
-                Stuff stuff = new Stuff(keyIndex, new Vector3(stuffPoses[j].x, 0, stuffPoses[j].y));
-                stuffs[i][j] = stuff;
-
-                this.stuffs.Add(stuff);
-            }
-        }
-
-        return stuffs;
-    }
-    */
 
     private void OnDrawGizmosSelected()
     {

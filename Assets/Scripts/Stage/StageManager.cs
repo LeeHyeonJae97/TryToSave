@@ -8,14 +8,15 @@ public class StageManager : MonoBehaviour
     public StuffManager stuffManager;
     public CrateManager crateManager;
     public FuelBarrelManager fuelBarrelManager;
-    public StageTable stageTable;
 
     public Sector sector = new Sector();
     private Vector2Int curSector;
 
-    private void Start()
+    private GameObject selectStageManager;
+
+    private void Awake()
     {
-        Init("Graveyard");        
+        selectStageManager = DontDestroyObjects.instance.selectStageManager;
     }
 
     private void Update()
@@ -32,9 +33,9 @@ public class StageManager : MonoBehaviour
         }
     }
 
-    public void Init(string key)
-    {        
-        var stage = stageTable.Get(key);
+    public void Init()
+    {
+        Stage stage = selectStageManager.GetComponent<SelectStageManager>().SelectedStage;
 
         // PoolingManager에 Pool 추가
         for (int i = 0; i < stage.zombies.Length; i++)
@@ -48,21 +49,21 @@ public class StageManager : MonoBehaviour
             PoolingManager.instance.CreatePool(stuff.name, 5, stuff.prefab);
         }
 
-        // Zombie
+        // Zombie 생성
         zombieManager.Init(stage.GetSpawnInfos("Zombie"));
-        //zombieManager.Init(stage.GetZombieNames());
 
-        // Crate
+        // Crate 생성
         crateManager.Init();
 
-        // FuelBarrel
+        // FuelBarrel 생성
         fuelBarrelManager.Init();
 
-        // Stuff
+        // Stuff 생성
         Stuff[][] stuffs = stuffManager.Init(stage.GetSpawnInfos("Stuff"));
-        //Stuff[][] stuffs = stuffManager.Init(stage.GetStuffNames());
 
         // Sector 생성
         sector.SpawnSector(Vector2Int.zero, stuffs);
+
+        Destroy(selectStageManager);
     }
 }

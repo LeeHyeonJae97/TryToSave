@@ -1492,25 +1492,25 @@ MonoBehaviour:
   floatDuration: 1
   stats:
   - statName: MaxHp
-    maxLevel: 0
-    value:
+    values:
     - 100
+    - 120
+    - 150
   - statName: MoveSpeed
-    maxLevel: 0
-    value:
-    - 5
+    values:
+    - 6
   - statName: Size
-    maxLevel: 0
-    value:
+    values:
     - 1
   - statName: MaxFuel
-    maxLevel: 0
-    value:
+    values:
     - 100
+    - 120
+    - 150
   - statName: FuelEfficiency
-    maxLevel: 0
-    value:
+    values:
     - 10
+    - 12
   healthBar: {fileID: 0}
   fuelBar: {fileID: 0}
   levelText: {fileID: 0}

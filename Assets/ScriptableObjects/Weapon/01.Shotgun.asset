@@ -23,18 +23,22 @@ MonoBehaviour:
   baseGetTarget: {fileID: 11400000, guid: 870fb95ae47831248aef920ad793187f, type: 2}
   stats:
   - statName: Damage
-    maxLevel: 1
-    value:
+    values:
+    - 1
+    - 2
     - 3
-  - statName: Range
-    maxLevel: 1
-    value:
     - 4
+    - 5
+  - statName: Range
+    values:
+    - 5
+    - 6
+    - 7
   - statName: Cooldown
-    maxLevel: 1
-    value:
-    - 2
+    values:
+    - 1
   - statName: HitRange
-    maxLevel: 1
-    value:
-    - 2
+    values:
+    - 1.5
+    - 1.8
+    - 2.2

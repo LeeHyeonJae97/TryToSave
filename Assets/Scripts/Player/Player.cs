@@ -10,7 +10,7 @@ public class Player : MonoBehaviour
     //private static int[] targetExps = { 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5 };
 
     public ConsumePointManager consumePointManager;
-    public JoyStick joyStick;
+    public Joystick joyStick;
     public Transform model;
     public Rigidbody rb;
 
@@ -88,10 +88,11 @@ public class Player : MonoBehaviour
 
             if (exp >= targetExps[Level])
             {
-                expBar.fillAmount = exp = 0;
+                Exp -= targetExps[Level];
                 LevelUp();
             }
-            else expBar.fillAmount = (float)exp / targetExps[Level];
+
+            expBar.fillAmount = (float)exp / targetExps[Level];
         }
     }
 
@@ -146,24 +147,20 @@ public class Player : MonoBehaviour
         }
     }
 
-    /*
-    public Stat[] GetAllStats()
-    {
-        Stat[] stats = new Stat[5];
-        stats[0] = maxHp;
-        stats[1] = moveSpeed;
-        stats[2] = size;
-        stats[3] = maxFuel;
-        stats[4] = fuelEfficiency;
-
-        return stats;
-    }
-    */
-
+    // 살릴까? 버릴까??
     private void LevelUp()
     {
         Level += 1;
         Point += 1;
+
+        consumePointManager.SetActive(true);
+    }
+
+    // 최초에 시작 레벨이 1보다 높은 경우 게임 시작하면서 호출해버린다.
+    public void LevelUp(int amount)
+    {
+        Level += amount;
+        Point += amount;
 
         consumePointManager.SetActive(true);
     }

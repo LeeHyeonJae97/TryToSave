@@ -28,15 +28,6 @@ public class ZombieManager : MonoBehaviour
         InvokeRepeating(nameof(CheckPos), 1, 5);
     }
 
-    /*
-    public void Init(string[] keys)
-    {
-        this.keys = keys;
-        InvokeRepeating(nameof(Spawn), 1, 3);
-        InvokeRepeating(nameof(CheckPos), 1, 5);
-    }
-    */
-
     public void Spawn()
     {
         if (zombies.Count > maxAmount) return;
@@ -64,32 +55,6 @@ public class ZombieManager : MonoBehaviour
             else Debug.LogError("Error");
         }
     }
-
-    /*
-    public void Spawn()
-    {
-        if (zombies.Count > maxAmount) return;
-
-        int amount = Random.Range(3, 7);
-
-        // Spawn 위치 결정
-        List<int> indexes = new List<int>();
-        while (indexes.Count < amount)
-        {
-            int index = Random.Range(0, spawnPoses.Length);
-            if (!indexes.Contains(index)) indexes.Add(index);
-        }
-
-        // Spawn
-        for (int i = 0; i < amount; i++)
-        {
-            string key = keys[Random.Range(0, keys.Length)];
-            GameObject zombie = PoolingManager.instance.Get(key, holder, spawnPoses[indexes[i]].position);
-            zombie.GetComponent<Zombie>().Init(Remove);
-            zombies.Add(zombie);
-        }
-    }
-    */
 
     public void Remove(GameObject zombie, int exp)
     {

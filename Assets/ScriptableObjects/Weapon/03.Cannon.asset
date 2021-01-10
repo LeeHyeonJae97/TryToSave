@@ -17,24 +17,22 @@ MonoBehaviour:
   cc: {fileID: 0}
   fireEffectName: FireEffect_Cannon
   bloodEffectName: BloodEffect_Cannon
-  weaponImage: {fileID: 0}
+  weaponImage: {fileID: 21300000, guid: 3783f195e2c8dc84cb1461fbe881e9cb, type: 3}
   baseDamage: {fileID: 11400000, guid: 702a35bc85ba23f4e9f06bdfddfd9fae, type: 2}
   baseDamageTiming: {fileID: 11400000, guid: fc89c89fad250e946b618c5504b4d307, type: 2}
   baseGetTarget: {fileID: 11400000, guid: 34b84a56c67ea01458162164c0e9152a, type: 2}
   stats:
   - statName: Damage
-    maxLevel: 1
-    value:
-    - 3
-  - statName: Range
-    maxLevel: 1
-    value:
+    values:
     - 5
+    - 6
+    - 7
+  - statName: Range
+    values:
+    - 8
   - statName: Cooldown
-    maxLevel: 1
-    value:
-    - 2
+    values:
+    - 3
   - statName: HitRange
-    maxLevel: 1
-    value:
-    - 0
+    values:
+    - 1

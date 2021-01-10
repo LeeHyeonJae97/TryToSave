@@ -6,10 +6,10 @@ using UnityEngine.Events;
 
 public class AlertConfirmPanel : MonoBehaviour
 {
+    public static AlertConfirmPanel instance;
+
     public Vector2 center;
     public Vector2 left, right;
-
-    public static AlertConfirmPanel instance;
 
     public Text message;
     public RectTransform confirmButton;
@@ -19,17 +19,18 @@ public class AlertConfirmPanel : MonoBehaviour
     private void Awake()
     {
         if (instance == null) instance = this;
-
-        else if (this != instance)
+        else
         {
-            Debug.LogError("Error");
-            Destroy(this);
+            Destroy(gameObject);
             return;
         }
 
         confirmButton.gameObject.SetActive(false);
         cancelButton.gameObject.SetActive(false);
+
         gameObject.SetActive(false);
+
+        DontDestroyOnLoad(gameObject);
     }
 
     public void Alert(string message)

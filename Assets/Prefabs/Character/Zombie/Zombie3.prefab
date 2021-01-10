@@ -51,14 +51,13 @@ MonoBehaviour:
   coll: {fileID: 7128141439758129277}
   mat: {fileID: 0}
   model: {fileID: 7595626080911731005}
-  zombieName: 
   minMaxHp: 180
   maxMaxHp: 200
   damage: 1
   cooldown: 1
   minMoveSpeed: 0.5
   maxMoveSpeed: 1
-  exp: 15
+  exp: 2
 --- !u!54 &8436090960516267083
 Rigidbody:
   m_ObjectHideFlags: 0
