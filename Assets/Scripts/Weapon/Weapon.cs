@@ -7,7 +7,8 @@ public class Weapon : MonoBehaviour
     public string WeaponName { get; private set; }
     public Sprite WeaponImage { get; private set; }
     private IGetTarget baseGetTarget;
-    private Dictionary<string, Stat> statDic = new Dictionary<string, Stat>();
+    private GameObject fireEffect;
+    private Dictionary<string, Stat> statDic;
     private float curCooldown;
 
     private void Update()
@@ -20,12 +21,14 @@ public class Weapon : MonoBehaviour
         else curCooldown += Time.deltaTime;
     }
 
-    public void Init(WeaponInfo info, IGetTarget baseGetTarget)
+    public void Init(WeaponInfo info, IGetTarget baseGetTarget, GameObject fireEffect)
     {
         WeaponName = info.weaponName;
-        WeaponImage = info.weaponImage;
+        WeaponImage = info.weaponImage;        
         this.baseGetTarget = baseGetTarget;
+        this.fireEffect = fireEffect;
 
+        statDic = new Dictionary<string, Stat>();
         for (int i = 0; i < info.stats.Length; i++)
             statDic.Add(info.stats[i].statName, new Stat(info.stats[i].statName, info.stats[i].Values));
     }
@@ -34,5 +37,11 @@ public class Weapon : MonoBehaviour
     {
         values = new Stat[statDic.Values.Count];
         statDic.Values.CopyTo(values, 0);
+    }
+
+    public void Return()
+    {
+        PoolingManager.instance.Return(fireEffect);
+        PoolingManager.instance.Return(gameObject);
     }
 }

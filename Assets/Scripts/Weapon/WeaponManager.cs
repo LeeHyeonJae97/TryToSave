@@ -13,7 +13,6 @@ public class WeaponManager : MonoBehaviour
     public Player player;
     public ZombieManager zombieManager;
 
-    public GameObject weaponPrefab;
     public WeaponInfoByLevel[] weaponInfoByLevels;
     private Dictionary<string, WeaponInfo> weaponInfoDic = new Dictionary<string, WeaponInfo>();
 
@@ -30,7 +29,7 @@ public class WeaponManager : MonoBehaviour
     public void Init()
     {
         // 게임 시작 시 Pistol을 기본 무기로 제공
-        player.weapons[0] = GetWeapon(weaponInfoDic["Pistol"]);
+        player.weapons[0] = GetWeapon(weaponInfoDic["FlameThrower"]);
     }
 
     public Weapon GetWeapon(WeaponInfo info)
@@ -42,10 +41,11 @@ public class WeaponManager : MonoBehaviour
         baseDamageTiming.Init(baseDamage, info.bulletName, info.GetStat("Range").Value);
 
         IGetTarget baseGetTarget = Instantiate(info.baseGetTarget);
-        baseGetTarget.Init(baseDamageTiming, zombieManager.GetTarget, PoolingManager.instance.Get(info.fireEffectName, player.transform));
+        GameObject fireEffect = PoolingManager.instance.Get(info.fireEffectName, player.transform);
+        baseGetTarget.Init(baseDamageTiming, zombieManager.GetTarget, fireEffect);
 
-        Weapon script = Instantiate(weaponPrefab, player.transform).GetComponent<Weapon>();        
-        script.Init(info, baseGetTarget);
+        Weapon script = PoolingManager.instance.Get("Weapon", player.transform).GetComponent<Weapon>();        
+        script.Init(info, baseGetTarget, fireEffect);
 
         return script;
     }

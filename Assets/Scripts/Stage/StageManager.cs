@@ -5,19 +5,14 @@ using UnityEngine;
 public class StageManager : MonoBehaviour
 {
     public ZombieManager zombieManager;
-    public StuffManager stuffManager;
     public CrateManager crateManager;
     public FuelBarrelManager fuelBarrelManager;
+    public StuffManager stuffManager;
+
+    public MeshRenderer ground;
 
     public Sector sector = new Sector();
     private Vector2Int curSector;
-
-    private GameObject selectStageManager;
-
-    private void Awake()
-    {
-        selectStageManager = DontDestroyObjects.instance.selectStageManager;
-    }
 
     private void Update()
     {
@@ -35,7 +30,7 @@ public class StageManager : MonoBehaviour
 
     public void Init()
     {
-        Stage stage = selectStageManager.GetComponent<SelectStageManager>().SelectedStage;
+        Stage stage = BetweenSceneData.selectedStage;
 
         // PoolingManager에 Pool 추가
         for (int i = 0; i < stage.zombies.Length; i++)
@@ -49,21 +44,26 @@ public class StageManager : MonoBehaviour
             PoolingManager.instance.CreatePool(stuff.name, 5, stuff.prefab);
         }
 
-        // Zombie 생성
+        ground.material = stage.groundMaterial;
+
         zombieManager.Init(stage.GetSpawnInfos("Zombie"));
 
-        // Crate 생성
-        crateManager.Init();
-
-        // FuelBarrel 생성
-        fuelBarrelManager.Init();
-
-        // Stuff 생성
         Stuff[][] stuffs = stuffManager.Init(stage.GetSpawnInfos("Stuff"));
 
-        // Sector 생성
         sector.SpawnSector(Vector2Int.zero, stuffs);
+    }
 
-        Destroy(selectStageManager);
+    public void StartSpawn()
+    {
+        zombieManager.StartSpawn();
+        crateManager.StartSpawn();
+        fuelBarrelManager.StartSpawn();
+    }
+
+    public void Reset()
+    {
+        zombieManager.Reset();
+        crateManager.Reset();
+        fuelBarrelManager.Reset();
     }
 }

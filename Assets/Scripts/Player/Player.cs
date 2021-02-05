@@ -4,15 +4,21 @@ using UnityEngine;
 using UnityEngine.UI;
 
 public class Player : MonoBehaviour
-{
+{    
     public static Vector3 Pos;
-    private static int[] targetExps = { 100, 200, 300, 400, 500, 600, 700, 800, 900, 1000, 1100, 1200 };
-    //private static int[] targetExps = { 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5 };
+    //private static int[] targetExps = { 100, 200, 300, 400, 500, 600, 700, 800, 900, 1000, 1100, 1200 };
+    private static int[] targetExps = { 20, 30, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5 };
+
+    public GameManager gameManager;
 
     public ConsumePointManager consumePointManager;
+
     public Joystick joyStick;
+
     public Transform model;
     public Rigidbody rb;
+
+    public MeshRenderer plane;
 
     public GameObject gainText;
     private Vector3 gainTextOrgPos;
@@ -39,7 +45,18 @@ public class Player : MonoBehaviour
             healthBar.fillAmount = ratio;
 
             // 남은 체력에 따라 체력 바 색깔이 상이
-            if (ratio <= 0) Debug.Log("GAME OVER");
+            
+            if (ratio <= 0)
+            {
+                gameObject.SetActive(false);
+                for (int i = 0; i < weapons.Length; i++)
+                {
+                    if (weapons[i] != null)
+                        weapons[i].gameObject.SetActive(false);
+                }
+
+                gameManager.GameOver();
+            }
             else if (ratio < 0.25f) healthBar.color = new Color32(238, 59, 53, 255);
             else if (ratio < 0.5f) healthBar.color = new Color32(236, 239, 53, 255);
             else healthBar.color = new Color32(112, 238, 53, 255);
@@ -89,7 +106,7 @@ public class Player : MonoBehaviour
             if (exp >= targetExps[Level])
             {
                 Exp -= targetExps[Level];
-                LevelUp();
+                LevelUp(1);
             }
 
             expBar.fillAmount = (float)exp / targetExps[Level];
@@ -102,30 +119,16 @@ public class Player : MonoBehaviour
 
     private void Awake()
     {
-        for (int i = 0; i < Stats.Length; i++)
-        {
-            Stats[i].Level = 0;
-            statDic.Add(Stats[i].statName, Stats[i]);
-        }
-        //maxHp.Level = moveSpeed.Level = size.Level = maxFuel.Level = fuelEfficiency.Level = 0;
-
-        gainTextOrgPos = gainText.GetComponent<RectTransform>().anchoredPosition3D;
-
-        CurHp = (int)statDic["MaxHp"].Value;
-        CurFuel = statDic["MaxFuel"].Value;
-        Exp = 0;
-        Level = 0;
-        Point = 0;
-        Pos = model.position;
-        weapons = new Weapon[5];
-
-        joyStick.move = Move;
+        Init();
     }
 
     private void FixedUpdate()
     {
         // Player의 위치를 참조하기 쉽게 하기 위해 static 변수에 현재 위치값을 저장
         Pos = model.position;
+
+        // 바닥 움직임
+        plane.material.mainTextureOffset = new Vector2(-Pos.x, -Pos.z) * 0.1f;
 
         // 충돌로 인해 속도가 생기지 않도록 조정
         rb.velocity = Vector3.zero;
@@ -147,13 +150,56 @@ public class Player : MonoBehaviour
         }
     }
 
-    // 살릴까? 버릴까??
-    private void LevelUp()
+    private void Init()
     {
-        Level += 1;
-        Point += 1;
+        for (int i = 0; i < Stats.Length; i++)
+        {
+            Stats[i].Level = 0;
+            statDic.Add(Stats[i].statName, Stats[i]);
+        }
 
-        consumePointManager.SetActive(true);
+        gainTextOrgPos = gainText.GetComponent<RectTransform>().anchoredPosition3D;
+
+        CurHp = (int)statDic["MaxHp"].Value;
+        CurFuel = statDic["MaxFuel"].Value;
+        Exp = 0;
+        Level = 0;
+        Point = 0;
+        Pos = model.position;
+        weapons = new Weapon[5];
+
+        joyStick.move = Move;
+    }
+
+    public void Reset()
+    {
+        if (!gameObject.activeInHierarchy) gameObject.SetActive(true);
+
+        for (int i = 0; i < Stats.Length; i++)
+            Stats[i].Level = 0;
+
+        CurHp = (int)statDic["MaxHp"].Value;
+        CurFuel = statDic["MaxFuel"].Value;
+        Exp = 0;
+        Level = 0;
+        Point = 0;
+
+        transform.position = Vector3.zero;
+        model.localPosition = Vector3.zero;
+        model.rotation = Quaternion.identity;
+        Pos = model.position;
+
+        for (int i = 0; i < weapons.Length; i++)
+        {
+            if (weapons[i] != null)
+            {
+                weapons[i].Return();
+                weapons[i] = null;
+            }
+        }
+
+        gainText.SetActive(false);
+        corGain = null;
     }
 
     // 최초에 시작 레벨이 1보다 높은 경우 게임 시작하면서 호출해버린다.

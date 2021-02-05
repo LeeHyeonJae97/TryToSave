@@ -17,3 +17,4 @@ MonoBehaviour:
   interval: 0.5
   slow: 1
   duration: 3
+  materialColor: {r: 0.15138839, g: 0.3962264, b: 0.15931201, a: 1}

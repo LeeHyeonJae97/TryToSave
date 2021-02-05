@@ -10,13 +10,17 @@ public class Zombie : MonoBehaviour
     public Animator anim;
     public Rigidbody rb;
     public Collider coll;
-    public Material mat;
     public Transform model;
+
+    public SkinnedMeshRenderer mesh;
+    private MaterialPropertyBlock propBlock;
+    private Color orgMatColor;
 
     public int minMaxHp;
     public int maxMaxHp;
     private int curHp;
     public int damage;
+    private int curDamage;
     public float cooldown = 1;
     private float curCooldown;
     public float minMoveSpeed;
@@ -24,53 +28,24 @@ public class Zombie : MonoBehaviour
     private float curMoveSpeed;
     public int exp;
     private bool dead;
-    private List<CrowdControl> ccs;
 
     private void OnCollisionStay(Collision collision)
     {
-        if(!dead)
+        if (!dead)
         {
             GameObject go = collision.gameObject;
             if (go.CompareTag("Player") && curCooldown >= cooldown)
             {
                 curCooldown = 0;
-                go.GetComponent<Player>().CurHp -= damage;
+                go.GetComponent<Player>().CurHp -= curDamage;
             }
         }
     }
 
     private void Update()
     {
-        if(!dead)
-        {
-            // CC기 처리
-            if (ccs != null)
-            {
-                for (int i = 0; i < ccs.Count; i++)
-                {
-                    if (ccs[i].duration <= 0)
-                    {
-                        curMoveSpeed += ccs[i].slow;
-                        ccs.RemoveAt(i);
-                    }
-
-                    else
-                    {
-                        if (ccs[i].curInterval > ccs[i].interval)
-                        {
-                            curHp -= ccs[i].damage;
-                            ccs[i].curInterval = 0;
-                        }
-                        else ccs[i].curInterval += Time.deltaTime;
-
-                        ccs[i].duration -= Time.deltaTime;
-                    }
-                }
-            }
-
-            // 공격 쿨타임 계산
-            curCooldown += Time.deltaTime;
-        }
+        // 공격 쿨타임 계산
+        if (!dead) curCooldown += Time.deltaTime;
     }
 
     private void FixedUpdate()
@@ -87,28 +62,24 @@ public class Zombie : MonoBehaviour
         }
     }
 
-    public void Init(DieCallback onDie)
+    public void Init(int level, DieCallback onDie)
     {
         this.onDie = onDie;
 
         coll.enabled = true;
         dead = false;
-        curHp = Random.Range(minMaxHp, maxMaxHp + 1);
-        curMoveSpeed = Random.Range(minMoveSpeed, maxMoveSpeed + 1);
+
+        // 공격력, 체력과 이동속도는 현재 플레이어의 레벨에 비례
+        float proportion = 1 + level * 0.05f;
+        curDamage = (int)(damage * proportion);
+        curHp = (int)(Random.Range(minMaxHp, maxMaxHp + 1) * proportion);
+        curMoveSpeed = Random.Range(minMoveSpeed, maxMoveSpeed + 1) * proportion;
 
         // 이동 속도에 맞춰 애니메이션 재생 속도 조절
         anim.speed = curMoveSpeed / 5;
         anim.Play("run");
 
         InvokeRepeating(nameof(CheckVelocity), 1, 0.5f);
-    }
-
-    public void SetState(CrowdControl cc)
-    {
-        if (ccs == null) ccs = new List<CrowdControl>();
-
-        curMoveSpeed -= cc.slow;
-        ccs.Add(cc);
     }
 
     public void Attacked(int damage, string bloodEffect)
@@ -127,7 +98,7 @@ public class Zombie : MonoBehaviour
             // 경험치 획득, 공격 가능한 좀비 리스트에서 제거는 바로 이루어지지만
             // 오브젝트를 다시 풀에 반납하는 일은 3초 뒤에 처리
             onDie(gameObject, exp);
-            Invoke(nameof(Return), 7);
+            Invoke(nameof(Return), 4);
         }
     }
 

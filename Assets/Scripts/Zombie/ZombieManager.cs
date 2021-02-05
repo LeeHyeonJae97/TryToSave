@@ -24,8 +24,21 @@ public class ZombieManager : MonoBehaviour
     public void Init(SpawnInfo[] spawnInfos)
     {
         this.spawnInfos = spawnInfos;
+    }
+
+    public void StartSpawn()
+    {
         InvokeRepeating(nameof(Spawn), 1, 3);
         InvokeRepeating(nameof(CheckPos), 1, 5);
+    }
+
+    public void Reset()
+    {
+        for (int i = 0; i < zombies.Count; i++)
+            PoolingManager.instance.Return(zombies[i]);
+        zombies.Clear();
+
+        CancelInvoke();
     }
 
     public void Spawn()
@@ -49,7 +62,7 @@ public class ZombieManager : MonoBehaviour
             if (index > -1)
             {
                 GameObject zombie = PoolingManager.instance.Get(spawnInfos[index].name, holder, spawnPoses[indexes[i]].position);
-                zombie.GetComponent<Zombie>().Init(Remove);
+                zombie.GetComponent<Zombie>().Init(player.Level, Remove);
                 zombies.Add(zombie);
             }
             else Debug.LogError("Error");
@@ -60,14 +73,6 @@ public class ZombieManager : MonoBehaviour
     {
         player.Exp += exp;
         zombies.Remove(zombie);
-    }
-
-    public void RemoveAll()
-    {
-        for (int i = 0; i < zombies.Count; i++)
-            PoolingManager.instance.Return(zombies[i]);
-
-        zombies.Clear();
     }
 
     public GameObject GetTarget(float range)

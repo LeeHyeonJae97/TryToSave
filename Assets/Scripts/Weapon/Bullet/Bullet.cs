@@ -10,32 +10,32 @@ public class Bullet : MonoBehaviour
     public float explosionRange;
 
     [Tooltip("Arc / Linear")]
-    public IBulletMove move;
+    public IBulletMove baseMove;
     [Tooltip("Target / Splash / Explosive")]
-    public IBulletDamage bulletDamage;
+    public IBulletDamage baseDamage;
 
     private void Awake()
     {
-        move = Instantiate(move);
-        bulletDamage = Instantiate(bulletDamage);
+        baseMove = Instantiate(baseMove);
+        baseDamage = Instantiate(baseDamage);
 
-        bulletDamage.Init(gameObject, hitEffectName, explosionRange);
-        move.Init(transform, speed);
+        baseDamage.Init(gameObject, hitEffectName, explosionRange);
+        baseMove.Init(transform, speed);
     }
 
     private void OnTriggerEnter(Collider other)
     {
-        if (other.CompareTag("Zombie")) bulletDamage.Hit(other.gameObject);
+        if (other.CompareTag("Zombie")) baseDamage.Hit(other.gameObject);
     }
 
     private void Update()
     {
-        if (move.Move()) bulletDamage.FinishFly();
+        if (baseMove.Move()) baseDamage.FinishFly();
     }
 
     public void SetActive(GameObject target, IDamage baseDamage, int damage, float range)
     {
-        Vector3 targetPos = bulletDamage.SetActive(target.transform, baseDamage, damage, range);
-        move.SetActive(targetPos);
+        Vector3 targetPos = this.baseDamage.SetActive(target.transform, baseDamage, damage, range);
+        baseMove.SetActive(targetPos);
     }
 }

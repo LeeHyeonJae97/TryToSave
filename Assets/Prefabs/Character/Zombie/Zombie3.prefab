@@ -49,7 +49,7 @@ MonoBehaviour:
   anim: {fileID: 7595626080920749789}
   rb: {fileID: 8436090960516267083}
   coll: {fileID: 7128141439758129277}
-  mat: {fileID: 0}
+  mesh: {fileID: 7595626080916518941}
   model: {fileID: 7595626080911731005}
   minMaxHp: 180
   maxMaxHp: 200
@@ -410,6 +410,12 @@ Transform:
 --- !u!95 &7595626080920749789 stripped
 Animator:
   m_CorrespondingSourceObject: {fileID: 9500000, guid: e4299bf26a09e9049839e1a1b75e562c,
+    type: 3}
+  m_PrefabInstance: {fileID: 7595626080911340477}
+  m_PrefabAsset: {fileID: 0}
+--- !u!137 &7595626080916518941 stripped
+SkinnedMeshRenderer:
+  m_CorrespondingSourceObject: {fileID: 13700000, guid: e4299bf26a09e9049839e1a1b75e562c,
     type: 3}
   m_PrefabInstance: {fileID: 7595626080911340477}
   m_PrefabAsset: {fileID: 0}

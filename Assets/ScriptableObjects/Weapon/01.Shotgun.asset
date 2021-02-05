@@ -17,7 +17,7 @@ MonoBehaviour:
   cc: {fileID: 0}
   fireEffectName: FireEffect_Pistol3
   bloodEffectName: BloodEffect_Gun2
-  weaponImage: {fileID: 0}
+  weaponImage: {fileID: 21300000, guid: fc19f4dd546127141bfce52031ac731e, type: 3}
   baseDamage: {fileID: 11400000, guid: 702a35bc85ba23f4e9f06bdfddfd9fae, type: 2}
   baseDamageTiming: {fileID: 11400000, guid: a56734c12a7a49b4ca560c64f2772223, type: 2}
   baseGetTarget: {fileID: 11400000, guid: 870fb95ae47831248aef920ad793187f, type: 2}
@@ -39,6 +39,6 @@ MonoBehaviour:
     - 1
   - statName: HitRange
     values:
-    - 1.5
-    - 1.8
-    - 2.2
+    - 1
+    - 1.2
+    - 1.3

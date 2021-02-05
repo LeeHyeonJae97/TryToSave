@@ -8,6 +8,7 @@ public abstract class IGetTarget : ScriptableObject
     protected GetClosestTarget getClosestTarget;
     protected IDamageTiming damageTiming;
     protected GameObject fireEffect;
+    protected ParticleSystem[] pss;
 
     public void Init(IDamageTiming damageTiming, GetClosestTarget getClosestTarget, GameObject fireEffect)
     {
@@ -20,6 +21,7 @@ public abstract class IGetTarget : ScriptableObject
         this.damageTiming = damageTiming;
         this.getClosestTarget = getClosestTarget;
         this.fireEffect = fireEffect;
+        pss = fireEffect.GetComponentsInChildren<ParticleSystem>();
     }
 
     protected void Fire(Vector3 targetPos)
@@ -28,7 +30,8 @@ public abstract class IGetTarget : ScriptableObject
         dir.y = 0;
         fireEffect.transform.position = Player.Pos + dir.normalized * 0.8f;
         fireEffect.transform.forward = -dir;
-        fireEffect.GetComponent<ParticleSystem>().Play();
+
+        for (int i = 0; i < pss.Length; i++) pss[i].Play();
     }
 
     public abstract bool GetTarget(int damage, float range, float hitRange);

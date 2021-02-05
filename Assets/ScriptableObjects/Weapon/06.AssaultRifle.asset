@@ -15,22 +15,28 @@ MonoBehaviour:
   weaponName: AssaultRifle
   bulletName: 
   cc: {fileID: 0}
-  fireEffectName: 
+  fireEffectName: FireEffect_Rifle1
   bloodEffectName: BloodEffect_Gun1
-  weaponImage: {fileID: 0}
+  weaponImage: {fileID: 21300000, guid: a0cac47a8cd6e5f4f8067f27943741e0, type: 3}
   baseDamage: {fileID: 11400000, guid: 702a35bc85ba23f4e9f06bdfddfd9fae, type: 2}
   baseDamageTiming: {fileID: 11400000, guid: a56734c12a7a49b4ca560c64f2772223, type: 2}
   baseGetTarget: {fileID: 11400000, guid: 34b84a56c67ea01458162164c0e9152a, type: 2}
   stats:
   - statName: Damage
-    value:
-    - 0
+    values:
+    - 3
+    - 4
+    - 5
   - statName: Range
-    value:
-    - 0
+    values:
+    - 5
+    - 6
+    - 7
   - statName: Cooldown
-    value:
-    - 0
+    values:
+    - 0.7
+    - 0.6
+    - 0.5
   - statName: HitRange
-    value:
+    values:
     - 1

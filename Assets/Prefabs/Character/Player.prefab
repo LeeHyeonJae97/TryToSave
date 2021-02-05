@@ -1155,7 +1155,7 @@ Light:
   m_InnerSpotAngle: 1
   m_CookieSize: 10
   m_Shadows:
-    m_Type: 0
+    m_Type: 2
     m_Resolution: -1
     m_CustomResolution: -1
     m_Strength: 1
@@ -1484,10 +1484,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 14fddb8c1c427234a9464428dc2a5bf5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  gameManager: {fileID: 0}
   consumePointManager: {fileID: 0}
   joyStick: {fileID: 0}
   model: {fileID: 4429148097457640538}
   rb: {fileID: 3954698239850938731}
+  plane: {fileID: 6716544367909175150}
   gainText: {fileID: 5914011447937378153}
   floatDuration: 1
   stats:
@@ -2724,7 +2726,7 @@ GameObject:
   - component: {fileID: 5423096745203332315}
   - component: {fileID: 6716544367909175150}
   m_Layer: 0
-  m_Name: Plane
+  m_Name: Ground
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

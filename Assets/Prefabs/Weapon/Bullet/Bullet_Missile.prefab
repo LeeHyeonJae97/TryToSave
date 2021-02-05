@@ -51,8 +51,8 @@ MonoBehaviour:
   hitEffectName: BulletEffect_Explosion
   speed: 3
   explosionRange: 2
-  move: {fileID: 11400000, guid: 822d614f995035644a3cd0212d81735a, type: 2}
-  bulletDamage: {fileID: 11400000, guid: acafa1cda02084d4b8c76d7836146e7c, type: 2}
+  baseMove: {fileID: 11400000, guid: 822d614f995035644a3cd0212d81735a, type: 2}
+  baseDamage: {fileID: 11400000, guid: 7cf28df4818faff44a752bd99077a38b, type: 2}
 --- !u!33 &4053617570416379896
 MeshFilter:
   m_ObjectHideFlags: 0

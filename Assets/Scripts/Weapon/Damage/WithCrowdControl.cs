@@ -31,7 +31,7 @@ public class WithCrowdControl : IDamage
         zombie.Attacked(damage, bloodEffect);
 
         // 풀링한다면 최적화 가능할듯
-        zombie.SetState(Instantiate(cc));
+        //zombie.SetCrowdControl(Instantiate(cc));
     }
 
     public override void Damage(GameObject[] targets, int damage)
@@ -48,7 +48,7 @@ public class WithCrowdControl : IDamage
             zombie.Attacked(damage, bloodEffect);
 
             // 풀링한다면 최적화 가능할듯
-            zombie.SetState(Instantiate(cc));
+            //zombie.SetCrowdControl(Instantiate(cc));
         }
     }
 }

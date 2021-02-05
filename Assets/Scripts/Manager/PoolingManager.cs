@@ -166,6 +166,21 @@ public class PoolingManager : MonoBehaviour
         go.transform.position = pos;
         return go;
     }
+
+    public GameObject Get(string key, Transform parent, Vector3 pos, Quaternion rot)
+    {
+        if (!poolDic.ContainsKey(key))
+        {
+            Debug.LogError("Wrong key");
+            return null;
+        }
+
+        GameObject go = poolDic[key].Get();
+        go.transform.SetParent(parent);
+        go.transform.position = pos;
+        go.transform.rotation = rot;
+        return go;
+    }
     #endregion
 
     #region Return

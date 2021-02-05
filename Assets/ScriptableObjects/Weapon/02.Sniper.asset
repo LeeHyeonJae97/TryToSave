@@ -15,22 +15,28 @@ MonoBehaviour:
   weaponName: Sniper
   bulletName: 
   cc: {fileID: 0}
-  fireEffectName: 
+  fireEffectName: FireEffect_Pistol2
   bloodEffectName: BloodEffect_Gun2
-  weaponImage: {fileID: 0}
+  weaponImage: {fileID: 21300000, guid: c905c41a8595cfb4b9545237c1a93fe3, type: 3}
   baseDamage: {fileID: 11400000, guid: 702a35bc85ba23f4e9f06bdfddfd9fae, type: 2}
   baseDamageTiming: {fileID: 11400000, guid: a56734c12a7a49b4ca560c64f2772223, type: 2}
   baseGetTarget: {fileID: 11400000, guid: 1282f8608f17ec74e8087264f8e3a671, type: 2}
   stats:
   - statName: Damage
-    value:
+    values:
     - 3
+    - 4
+    - 5
   - statName: Range
-    value:
+    values:
+    - 7
     - 8
+    - 9
   - statName: Cooldown
-    value:
+    values:
     - 3
+    - 2
+    - 1
   - statName: HitRange
-    value:
+    values:
     - 1

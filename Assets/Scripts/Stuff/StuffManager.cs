@@ -39,10 +39,8 @@ public class StuffManager : MonoBehaviour
             // 일정 거리 내로 들어오면 오브젝트 할당받아 활성화
             else if (!stuffs[i].active && dist <= maxActiveRange * maxActiveRange)
             {
-                GameObject go = PoolingManager.instance.Get(spawnInfos[stuffs[i].keyIndex].name);
-
-                go.transform.position = stuffs[i].pos;
-                go.transform.SetParent(holder);
+                GameObject go = PoolingManager.instance.Get(spawnInfos[stuffs[i].keyIndex].name, holder,
+                    stuffs[i].pos, Quaternion.Euler(0, stuffs[i].angle, 0));
 
                 stuffs[i].active = true;
                 stuffs[i].go = go;
@@ -58,6 +56,7 @@ public class StuffManager : MonoBehaviour
         Stuff[][] stuffs = new Stuff[Sector.count * Sector.count][];
         for (int i = 0; i < stuffs.Length; i++)
         {
+            // 위치
             List<Vector2> stuffPoses = new List<Vector2>();
             for (int j = 0; j < 10; j++)
             {
@@ -68,13 +67,16 @@ public class StuffManager : MonoBehaviour
                 if (!stuffPoses.Contains(tmp)) stuffPoses.Add(tmp);
             }
 
+            // 회전 각도
+            int angle = Random.Range(0, 360);
+
             stuffs[i] = new Stuff[stuffPoses.Count];
             for (int j = 0; j < stuffs[i].Length; j++)
             {
                 int index = MyRandom.Random(spawnInfos);
                 if (index > -1)
                 {
-                    Stuff stuff = new Stuff(index, new Vector3(stuffPoses[j].x, 0, stuffPoses[j].y));
+                    Stuff stuff = new Stuff(index, new Vector3(stuffPoses[j].x, 0, stuffPoses[j].y), angle);
                     stuffs[i][j] = stuff;
 
                     this.stuffs.Add(stuff);
